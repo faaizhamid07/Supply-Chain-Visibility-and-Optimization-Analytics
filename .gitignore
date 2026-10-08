@@ -1,0 +1,36 @@
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+.venv/
+venv/
+env/
+ENV/
+
+# Jupyter
+.ipynb_checkpoints/
+
+# Data files that may contain sensitive or large internship datasets
+*.csv
+*.xlsx
+*.xls
+*.parquet
+*.json
+
+# Power BI local/cache files
+*.pbi/
+*.pbix.lock
+~$*.pbix
+
+# OS / IDE
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+
+# Secrets
+.env
+.env.*
+*.pem
+*.key
+secrets/
