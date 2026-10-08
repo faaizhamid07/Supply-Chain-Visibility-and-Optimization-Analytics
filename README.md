@@ -121,6 +121,27 @@ The final Operational KPI Summary reports:
 
 These figures demonstrate substantial variation in operational and delivery performance between destination clusters.
 
+
+## Dashboard Preview
+
+### Supply Chain Visibility Dashboard
+
+![Supply Chain Visibility Dashboard](assets/dashboard-1.png)
+
+The first dashboard provides an overall view of vessel and transportation activity, including AIS records, unique vessels, average speed, total distance, average ETA, operational status, speed categories, destination activity, and weather context.
+
+### Data Preparation in Power Query
+
+![Power Query Data Preparation](assets/dataset.png)
+
+The project uses Power Query for data import, type checking, transformation, and preparation of the AIS dataset before modelling in Power BI.
+
+### Warehouse & Operational Efficiency Dashboard
+
+![Warehouse and Operational Efficiency Dashboard](assets/final-dashboard.png)
+
+The final dashboard consolidates destination-level records, operational utilization, vessel speed, on-time performance, cargo movement, ETA, and vessel-type activity.
+
 ## Important Assumptions
 
 Several measures in the project are **operational proxies**, not conventional accounting/business measures.
