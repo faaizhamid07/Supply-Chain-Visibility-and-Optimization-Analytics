@@ -1,0 +1,23 @@
+relationship 7aa48618-ee56-4c6a-a90a-71341128f920
+	joinOnDateBehavior: datePartOnly
+	fromColumn: Fact_Vessel.BaseDateTime
+	toColumn: LocalDateTable_a78e14db-cf81-443d-b265-abe58e790a19.Date
+
+relationship 6c7ca4da-7018-4590-bd17-abb796bc53c5
+	joinOnDateBehavior: datePartOnly
+	fromColumn: Fact_Vessel.timestamp_str
+	toColumn: LocalDateTable_df17cf47-4789-49ba-8b97-854504496ccd.Date
+
+relationship 5500fe16-9d6a-4c21-bdf5-8d662a3c9491
+	joinOnDateBehavior: datePartOnly
+	fromColumn: Fact_Vessel.Date
+	toColumn: LocalDateTable_078cab55-de5e-48ba-80c6-0fdc98c911d2.Date
+
+relationship AutoDetected_7b1db365-79df-4b46-888d-55da2baba5ba
+	fromColumn: Fact_Vessel.MMSI
+	toColumn: dim_Vessel.MMSI
+
+relationship AutoDetected_71be15db-bbc8-4110-8d72-94c556131ffd
+	fromColumn: Fact_Vessel.'Destination Clusters'
+	toColumn: dim_Destination.dest_cluster
+

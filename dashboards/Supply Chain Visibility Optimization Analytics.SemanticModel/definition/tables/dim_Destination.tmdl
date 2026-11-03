@@ -1,0 +1,46 @@
+table dim_Destination
+	lineageTag: 97519f8d-65df-41e1-8734-28e3cee6bd03
+
+	column dest_cluster
+		dataType: int64
+		formatString: 0
+		lineageTag: 7476348e-7f03-49c3-9094-42fbaaba1415
+		summarizeBy: none
+		sourceColumn: dest_cluster
+
+		annotation SummarizationSetBy = Automatic
+
+	column dest_lat
+		dataType: double
+		lineageTag: deca210b-4816-4f19-a0e5-210e25680782
+		summarizeBy: none
+		sourceColumn: dest_lat
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column dest_lon
+		dataType: double
+		lineageTag: 271c7a53-bf30-46a4-b919-e4e8e19b1332
+		summarizeBy: none
+		sourceColumn: dest_lon
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	partition dim_Destination = m
+		mode: import
+		source =
+				let
+				    Source = Fact_Vessel,
+				    #"Removed Other Columns" = Table.SelectColumns(Source,{"dest_cluster", "dest_lat", "dest_lon"}),
+				    #"Removed Duplicates" = Table.Distinct(#"Removed Other Columns", {"dest_cluster"})
+				in
+				    #"Removed Duplicates"
+
+	annotation PBI_NavigationStepName = Navigation
+
+	annotation PBI_ResultType = Table
+

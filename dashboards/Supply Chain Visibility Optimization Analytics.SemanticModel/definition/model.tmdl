@@ -1,0 +1,25 @@
+model Model
+	culture: en-US
+	defaultPowerBIDataSourceVersion: powerBI_V3
+	sourceQueryCulture: en-IN
+	valueFilterBehavior: independent
+	dataAccessOptions
+		legacyRedirects
+		returnErrorValuesAsNull
+
+annotation __PBI_TimeIntelligenceEnabled = 1
+
+annotation PBI_QueryOrder = ["Fact_Vessel","dim_Vessel","dim_Destination"]
+
+annotation PBI_ProTooling = ["DevMode"]
+
+ref table Fact_Vessel
+ref table DateTableTemplate_735b92d3-37f9-4ca1-8277-a08b6da8b2fd
+ref table LocalDateTable_a78e14db-cf81-443d-b265-abe58e790a19
+ref table LocalDateTable_df17cf47-4789-49ba-8b97-854504496ccd
+ref table LocalDateTable_078cab55-de5e-48ba-80c6-0fdc98c911d2
+ref table dim_Vessel
+ref table dim_Destination
+
+ref cultureInfo en-US
+

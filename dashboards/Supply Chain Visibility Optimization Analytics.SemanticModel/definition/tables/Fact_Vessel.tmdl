@@ -1,0 +1,785 @@
+table Fact_Vessel
+	lineageTag: fc2baadb-161e-4912-af78-7554d5c17a8c
+
+	measure 'Total AIS Records' = COUNTROWS(Fact_Vessel)
+		formatString: 0
+		lineageTag: bd31bc1d-58d1-4886-ab25-fcfff6a89189
+
+		changedProperty = IsHidden
+
+	measure 'Unique Vessels' = DISTINCTCOUNT(Fact_Vessel[MMSI])
+		formatString: 0
+		lineageTag: 6a945ba8-f647-4bfc-8582-ee8a45643e33
+
+		changedProperty = IsHidden
+
+	measure 'Average Speed (km/h)' = AVERAGE(Fact_Vessel[SOG_kmh])
+		lineageTag: e666c6d0-43f9-4fe2-bbd0-46fa6e1ed2ab
+
+		changedProperty = IsHidden
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure 'Total Distance (km)' = SUM(Fact_Vessel[dist_km])
+		lineageTag: 9c93353d-0118-4515-9473-0d611be38a8b
+
+		changedProperty = IsHidden
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure 'Average ETA (hours)' = AVERAGE(Fact_Vessel[ETA_hours])
+		lineageTag: 9ebd5cb0-295b-4666-b41f-14e3e0a8c88f
+
+		changedProperty = IsHidden
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure 'Stopped Records' =
+			CALCULATE(
+			    COUNTROWS(Fact_Vessel),
+			    Fact_Vessel[Operational_Status] = "Stopped"
+			)
+		formatString: 0
+		lineageTag: 8e1f30a8-8a3f-4c8c-a459-f7c872c8130d
+
+		changedProperty = IsHidden
+
+	measure 'Stopped AIS Records %' =
+			DIVIDE(
+			    [Stopped Records],
+			    [Total AIS Records],
+			    0
+			)
+		formatString: 0.00%;-0.00%;0.00%
+		lineageTag: ca805f59-bd8b-4609-8043-f98048986f67
+
+		changedProperty = IsHidden
+
+	measure 'Average Visibility (km)' =
+			
+			AVERAGE(Fact_Vessel[weather_visibility_km])
+		lineageTag: 5ffb1654-98e4-49f9-ad35-ac0d5ad42509
+
+		changedProperty = IsHidden
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure 'Average Wind Speed (km/h)' =
+			
+			AVERAGE(Fact_Vessel[weather_wind_kph])
+		lineageTag: f53a3458-b810-4e8f-919a-2fc05f5f3410
+
+		changedProperty = IsHidden
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure 'Cargo Movement Records' =
+			
+			CALCULATE(
+			    COUNTROWS(Fact_Vessel),
+			    Fact_Vessel[Operational_Status] = "Moving"
+			)
+		formatString: 0
+		lineageTag: 2a4836a3-81ec-4156-a956-2c887bd0f606
+
+		changedProperty = IsHidden
+
+	measure 'Active Cargo Vessels' =
+			
+			CALCULATE(
+			    DISTINCTCOUNT(Fact_Vessel[MMSI]),
+			    Fact_Vessel[Operational_Status] = "Moving"
+			)
+		formatString: 0
+		lineageTag: f9e1a449-c50f-46f0-aede-ba1240ac62a0
+
+		changedProperty = IsHidden
+
+	measure 'Cargo Records per Active Vessel' =
+			
+			DIVIDE(
+			    [Cargo Movement Records],
+			    [Active Cargo Vessels],
+			    0
+			)
+		lineageTag: 1c1573fa-44de-4ab6-ba69-aae9c2e8009c
+
+		changedProperty = IsHidden
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure 'Delayed Deliveries' =
+			
+			CALCULATE(
+			    COUNTROWS(Fact_Vessel),
+			    Fact_Vessel[ETA_hours] > 60
+			)
+		formatString: 0
+		lineageTag: 9b4d04c3-fd56-4618-b675-57c6f0054b81
+
+	measure 'On-Time Delivery %' =
+			
+			1 - DIVIDE([Delayed Deliveries],[Total AIS Records],0)
+		formatString: 0.00%;-0.00%;0.00%
+		lineageTag: 5846f72b-1762-4317-a863-fc7e86144bf6
+
+	measure 'ETA Variance' =
+			
+			[Average ETA (hours)] - 59.89
+		lineageTag: de541f4e-62d8-4184-b0bd-6b156b7e6146
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure 'Total Transportation Cost Proxy' =
+			
+			SUM(Fact_Vessel[dist_km])
+		lineageTag: 15717ade-175c-4928-943c-6d0a35669a87
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure 'Average Shipment Cost Proxy' =
+			
+			AVERAGE(Fact_Vessel[dist_km])
+		lineageTag: 1f82ddbe-f37d-4214-a2b1-2d08ea52e739
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure 'Fulfillment Rate' =
+			
+			DIVIDE(
+			    [Cargo Movement Records],
+			    [Total AIS Records],
+			    0
+			)
+		formatString: 0.00%;-0.00%;0.00%
+		lineageTag: a256dc3f-be5b-4f74-bf68-702e70f8200c
+
+	measure 'On-Time Rate' =
+			
+			1 -
+			DIVIDE(
+			    [Delayed Deliveries],
+			    [Total AIS Records],
+			    0
+			)
+		formatString: 0.00%;-0.00%;0.00%
+		lineageTag: f62f9e41-dec9-4ed4-ab3b-13805ae2c311
+
+	measure 'Supplier Shipment Count' =
+			
+			COUNTROWS(Fact_Vessel)
+		formatString: 0
+		lineageTag: ee7c52a1-7b60-4c80-9725-b17fd0442463
+
+	measure 'Supplier Quality Score' =
+			
+			VAR AvgETA =
+			    AVERAGE(Fact_Vessel[ETA_hours])
+			VAR Score =
+			    100 -
+			    DIVIDE(AvgETA, 2, 0)
+			RETURN
+			    MAX(0, MIN(100, Score))
+		lineageTag: f6d3b5a2-a464-4bff-a33b-b1e344579ebc
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure 'Carrier Transportation Cost' =
+			
+			SUM(Fact_Vessel[dist_km])
+		lineageTag: 8e9d1e26-ced1-4e9d-b25f-bcbaf67406e2
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure 'Operational Utilization Proxy' =
+			
+			DIVIDE(
+			    [Cargo Movement Records],
+			    [Total AIS Records],
+			    0
+			)
+		formatString: 0.00%;-0.00%;0.00%
+		lineageTag: 4b636ffa-0126-4d10-bb4f-429cb3a2371d
+
+	measure Measure
+		lineageTag: a95b5a75-a4f6-4e50-978f-14f048f6e853
+
+		annotation 43dbc3e8-3a1c-4b6f-9923-b49ff7d6691c = True
+
+	measure 'Moving AIS Records' =
+			
+			CALCULATE(
+			    COUNTROWS(Fact_Vessel),
+			    Fact_Vessel[Speed_Category] IN {"Fast", "Moderate", "Slow"}
+			)
+		formatString: 0
+		lineageTag: 2cee8154-a9cd-4f9e-a36a-da8fc81661aa
+
+	measure 'Average Delivery Time' = AVERAGE(Fact_Vessel[ETA_hours])
+		lineageTag: 6e6e7c57-2103-40cc-8fc0-f4d572e57d81
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column MMSI
+		dataType: int64
+		formatString: 0
+		lineageTag: aefa9b32-c630-4120-87b7-c1756f009ccc
+		summarizeBy: none
+		sourceColumn: MMSI
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+	column BaseDateTime
+		dataType: dateTime
+		formatString: General Date
+		lineageTag: 82eb3ccf-df2c-4d59-b3f9-10317b342699
+		summarizeBy: none
+		sourceColumn: BaseDateTime
+
+		variation Variation
+			isDefault
+			relationship: 7aa48618-ee56-4c6a-a90a-71341128f920
+			defaultHierarchy: LocalDateTable_a78e14db-cf81-443d-b265-abe58e790a19.'Date Hierarchy'
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+	column LAT
+		dataType: double
+		lineageTag: 31929b2f-3f4a-4265-9ed8-cae73667f541
+		summarizeBy: sum
+		sourceColumn: LAT
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column LON
+		dataType: double
+		lineageTag: 607d9d36-cc5d-4943-b6f6-407a0ce55036
+		summarizeBy: sum
+		sourceColumn: LON
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column SOG
+		dataType: double
+		lineageTag: add09925-c143-4aeb-8e7c-adcea3d4e9a9
+		summarizeBy: sum
+		sourceColumn: SOG
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column COG
+		dataType: double
+		lineageTag: 36c77fad-cf7d-4a7d-a3dc-0f049b895dc0
+		summarizeBy: sum
+		sourceColumn: COG
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column Heading
+		dataType: int64
+		formatString: 0
+		lineageTag: c237651a-b446-445d-987b-788fdba38a47
+		summarizeBy: sum
+		sourceColumn: Heading
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+	column VesselName
+		dataType: string
+		lineageTag: a3f43b30-7670-44fb-9c5e-1d510971e768
+		summarizeBy: none
+		sourceColumn: VesselName
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+	column IMO
+		dataType: string
+		lineageTag: 33c56477-01ec-47b8-98af-0a77576fbf30
+		summarizeBy: none
+		sourceColumn: IMO
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+	column CallSign
+		dataType: string
+		lineageTag: 2d0334cf-1ecb-4c12-bd1e-cf4d757cf520
+		summarizeBy: none
+		sourceColumn: CallSign
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+	column VesselType
+		dataType: int64
+		formatString: 0
+		lineageTag: 53a30cd4-8889-43e9-94dd-99c46811d165
+		summarizeBy: sum
+		sourceColumn: VesselType
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+	column Status
+		dataType: int64
+		formatString: 0
+		lineageTag: 4dd2434f-6eba-454b-a705-81ddeef3ce92
+		summarizeBy: sum
+		sourceColumn: Status
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+	column Length
+		dataType: int64
+		formatString: 0
+		lineageTag: 36f5ec1a-a179-4199-b7e4-40397a44181f
+		summarizeBy: sum
+		sourceColumn: Length
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+	column Width
+		dataType: int64
+		formatString: 0
+		lineageTag: 592b11fd-124a-4d26-95b3-2f372b9474ea
+		summarizeBy: sum
+		sourceColumn: Width
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+	column Draft
+		dataType: double
+		lineageTag: 7f5d1538-2c4d-42be-afb8-014dcec45f17
+		summarizeBy: sum
+		sourceColumn: Draft
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column Cargo
+		dataType: int64
+		formatString: 0
+		lineageTag: 199a2635-71a6-412c-aaaf-3c30e2b4de5c
+		summarizeBy: sum
+		sourceColumn: Cargo
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+	column TransceiverClass
+		dataType: string
+		lineageTag: ac9151eb-dbf8-48de-a844-c16b3043b7f5
+		summarizeBy: none
+		sourceColumn: TransceiverClass
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Destination Clusters'
+		dataType: int64
+		formatString: 0
+		lineageTag: 52aaa8ca-934b-4ee7-babd-7e5e654563f5
+		summarizeBy: none
+		sourceColumn: Destination Clusters
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+	column dest_lat
+		dataType: double
+		lineageTag: f97c48af-fd0e-489e-a3e0-51823f31b1cf
+		summarizeBy: sum
+		sourceColumn: dest_lat
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column dest_lon
+		dataType: double
+		lineageTag: ea269fdb-e4cd-404d-8310-2e316b65d7e5
+		summarizeBy: sum
+		sourceColumn: dest_lon
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column dist_km
+		dataType: double
+		lineageTag: 9b6603ea-74a4-460a-9697-1cfee2862b4d
+		summarizeBy: sum
+		sourceColumn: dist_km
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column SOG_kmh
+		dataType: double
+		lineageTag: 22b536b4-c2b9-4d5f-9e2d-b550b6980780
+		summarizeBy: sum
+		sourceColumn: SOG_kmh
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column ETA_min
+		dataType: double
+		lineageTag: e9f57735-be69-42a3-b860-fdd34687a782
+		summarizeBy: sum
+		sourceColumn: ETA_min
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column VesselType_enc
+		dataType: int64
+		formatString: 0
+		lineageTag: 8dca82a5-235e-4103-9a9c-13835ee49f88
+		summarizeBy: sum
+		sourceColumn: VesselType_enc
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+	column Status_enc
+		dataType: int64
+		formatString: 0
+		lineageTag: 846b17c2-2a91-4df1-82ce-5d6c208f5add
+		summarizeBy: sum
+		sourceColumn: Status_enc
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+	column Cargo_enc
+		dataType: int64
+		formatString: 0
+		lineageTag: 65f734ca-c803-4ad5-87a7-997937415993
+		summarizeBy: sum
+		sourceColumn: Cargo_enc
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+	column ETA_hours
+		dataType: double
+		lineageTag: 92f4e772-4bf6-493f-81ee-bc013d34d6bd
+		summarizeBy: sum
+		sourceColumn: ETA_hours
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column Speed_Category
+		dataType: string
+		lineageTag: 7177c346-1e4e-47e8-87e9-957746475a51
+		summarizeBy: none
+		sourceColumn: Speed_Category
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+	column timestamp_str
+		dataType: dateTime
+		formatString: General Date
+		lineageTag: 24b6f10e-36c5-48f6-8acd-0a53591b3c5d
+		summarizeBy: none
+		sourceColumn: timestamp_str
+
+		variation Variation
+			isDefault
+			relationship: 6c7ca4da-7018-4590-bd17-abb796bc53c5
+			defaultHierarchy: LocalDateTable_df17cf47-4789-49ba-8b97-854504496ccd.'Date Hierarchy'
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+	column lat_r
+		dataType: double
+		lineageTag: 5b814443-d937-4171-b3b2-10258d8698b1
+		summarizeBy: sum
+		sourceColumn: lat_r
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column lon_r
+		dataType: double
+		lineageTag: dfdd38ca-8a8c-44d4-b640-3c63c014d7a6
+		summarizeBy: sum
+		sourceColumn: lon_r
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column group_id
+		dataType: string
+		lineageTag: c72eddb6-02ff-423d-a78c-4d0c9febb82f
+		summarizeBy: none
+		sourceColumn: group_id
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+	column weather_available
+		dataType: int64
+		formatString: 0
+		lineageTag: 0730d7c1-2840-4f06-a25e-0c8f74c1f8b2
+		summarizeBy: sum
+		sourceColumn: weather_available
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+	column weather_temp_c
+		dataType: double
+		lineageTag: 89207605-22a3-442c-af1b-4b86e84e5b98
+		summarizeBy: sum
+		sourceColumn: weather_temp_c
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column weather_humidity
+		dataType: int64
+		formatString: 0
+		lineageTag: e7d4ad3e-f81b-49f9-a00a-cdbb7b01b444
+		summarizeBy: sum
+		sourceColumn: weather_humidity
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+	column weather_precip_mm
+		dataType: double
+		lineageTag: b86e6b9a-b978-4c30-82cc-2371c2064afc
+		summarizeBy: sum
+		sourceColumn: weather_precip_mm
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column weather_wind_kph
+		dataType: double
+		lineageTag: 2d4098a7-0d86-41ef-aa7d-8ca3f5fc5745
+		summarizeBy: sum
+		sourceColumn: weather_wind_kph
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column weather_wind_dir_degree
+		dataType: int64
+		formatString: 0
+		lineageTag: 0462a88c-4daf-4ae2-9061-fa18f92e8622
+		summarizeBy: sum
+		sourceColumn: weather_wind_dir_degree
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+	column weather_pressure_mb
+		dataType: double
+		lineageTag: 02f9eb1a-13f4-4576-9920-2c0efbcfed04
+		summarizeBy: sum
+		sourceColumn: weather_pressure_mb
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column weather_cloud
+		dataType: int64
+		formatString: 0
+		lineageTag: 69b9ea23-5f7e-4909-8e06-837a30688bbf
+		summarizeBy: sum
+		sourceColumn: weather_cloud
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+	column weather_visibility_km
+		dataType: int64
+		formatString: 0
+		lineageTag: 281c37b5-7855-4dd1-bda2-d27886e6a281
+		summarizeBy: sum
+		sourceColumn: weather_visibility_km
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+	column Date
+		dataType: dateTime
+		formatString: Long Date
+		lineageTag: f17ae27c-de93-4cd6-92bd-1f6a419c4473
+		summarizeBy: none
+		sourceColumn: Date
+
+		variation Variation
+			isDefault
+			relationship: 5500fe16-9d6a-4c21-bdf5-8d662a3c9491
+			defaultHierarchy: LocalDateTable_078cab55-de5e-48ba-80c6-0fdc98c911d2.'Date Hierarchy'
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation UnderlyingDateTimeDataType = Date
+
+	column Operational_Status
+		dataType: string
+		lineageTag: 533ce2b8-3d17-4436-9837-82416a403c78
+		summarizeBy: none
+		sourceColumn: Operational_Status
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+	column Hour =
+			
+			HOUR(Fact_Vessel[BaseDateTime])
+		formatString: 0
+		lineageTag: f2116d77-7d85-42a7-9634-f749739838ef
+		summarizeBy: sum
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Vessel Type Name' = ```
+			
+			VAR Code = IFERROR(VALUE(Fact_Vessel[VesselType]), -1)
+			RETURN
+			    SWITCH(
+			        TRUE(),
+			        Code = 0, "Not available",
+			        Code = 30, "Fishing",
+			        Code = 31 || Code = 32, "Towing",
+			        Code = 33, "Dredging",
+			        Code = 34, "Diving operations",
+			        Code = 35, "Military",
+			        Code = 36, "Sailing",
+			        Code = 37, "Pleasure craft",
+			        Code >= 50 && Code <= 59, "Special-purpose vessel",
+			        Code >= 60 && Code <= 69, "Passenger vessel",
+			        Code >= 70 && Code <= 79, "Cargo vessel",
+			        Code >= 80 && Code <= 89, "Tanker",
+			        Code >= 90 && Code <= 99, "Other vessel",
+			        "Other / unclassified"
+			    )
+			
+			```
+		lineageTag: 956e3a0b-efbc-4451-a4bf-c587cd438282
+		summarizeBy: none
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Hour of Day' = HOUR(Fact_Vessel[BaseDateTime])
+		formatString: 0
+		lineageTag: 48c9f077-e3bc-4cbb-874f-4cf222acaed7
+		summarizeBy: sum
+
+		annotation SummarizationSetBy = Automatic
+
+	partition Fact_Vessel = m
+		mode: import
+		source =
+				let
+				    Source = Csv.Document(File.Contents("D:\ais_data_cleaned.csv"), [Delimiter = ",", Columns = 41, Encoding = 1252, QuoteStyle = QuoteStyle.None]),
+				    #"Promoted Headers" = Table.PromoteHeaders(Source, [PromoteAllScalars=true]),
+				    #"Changed Type" = Table.TransformColumnTypes(#"Promoted Headers",{{"MMSI", Int64.Type}, {"BaseDateTime", type datetime}, {"LAT", type number}, {"LON", type number}, {"SOG", type number}, {"COG", type number}, {"Heading", Int64.Type}, {"VesselName", type text}, {"IMO", type text}, {"CallSign", type text}, {"VesselType", Int64.Type}, {"Status", Int64.Type}, {"Length", Int64.Type}, {"Width", Int64.Type}, {"Draft", type number}, {"Cargo", Int64.Type}, {"TransceiverClass", type text}, {"dest_cluster", Int64.Type}, {"dest_lat", type number}, {"dest_lon", type number}, {"dist_km", type number}, {"SOG_kmh", type number}, {"ETA_min", type number}, {"VesselType_enc", Int64.Type}, {"Status_enc", Int64.Type}, {"Cargo_enc", Int64.Type}, {"ETA_hours", type number}, {"Speed_Category", type text}, {"timestamp_str", type datetime}, {"lat_r", type number}, {"lon_r", type number}, {"group_id", type text}, {"weather_available", Int64.Type}, {"weather_temp_c", type number}, {"weather_humidity", Int64.Type}, {"weather_precip_mm", type number}, {"weather_wind_kph", type number}, {"weather_wind_dir_degree", Int64.Type}, {"weather_pressure_mb", type number}, {"weather_cloud", Int64.Type}, {"weather_visibility_km", Int64.Type}}),
+				    #"Inserted Date" = Table.AddColumn(#"Changed Type", "Date", each DateTime.Date([BaseDateTime]), type date),
+				    #"Added Conditional Column" = Table.AddColumn(#"Inserted Date", "Operational_Status", each if [Speed_Category] = "Stopped" then "Stopped" else "Moving"),
+				    #"Renamed Columns" = Table.RenameColumns(#"Added Conditional Column",{{"dest_cluster", "Destination Clusters"}})
+				in
+				    #"Renamed Columns"
+
+	changedProperty = IsHidden
+
+	annotation PBI_NavigationStepName = Navigation
+
+	annotation PBI_ResultType = Table
+

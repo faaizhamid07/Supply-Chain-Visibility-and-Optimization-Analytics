@@ -1,0 +1,11 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/gitIntegration/platformProperties/2.0.0/schema.json",
+  "metadata": {
+    "type": "SemanticModel",
+    "displayName": "Supply Chain Visibility Optimization Analytics"
+  },
+  "config": {
+    "version": "2.0",
+    "logicalId": "60d57486-d2e7-42b9-a77d-1274c1fb850e"
+  }
+}

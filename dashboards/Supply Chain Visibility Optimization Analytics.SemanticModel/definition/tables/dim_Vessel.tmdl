@@ -1,0 +1,104 @@
+table dim_Vessel
+	lineageTag: 1e6bb5ff-7e66-48cb-afa6-bb1bf1fdff32
+
+	column MMSI
+		dataType: int64
+		formatString: 0
+		lineageTag: 6c748303-fcd1-4f54-b48b-5e953c304601
+		summarizeBy: none
+		sourceColumn: MMSI
+
+		annotation SummarizationSetBy = Automatic
+
+	column VesselName
+		dataType: string
+		lineageTag: dc4cfd04-b0e5-412d-811c-d0f9ad0eb2cc
+		summarizeBy: none
+		sourceColumn: VesselName
+
+		annotation SummarizationSetBy = Automatic
+
+	column IMO
+		dataType: string
+		lineageTag: 34d03e65-a267-4eb8-bfa5-a75e565d5459
+		summarizeBy: none
+		sourceColumn: IMO
+
+		annotation SummarizationSetBy = Automatic
+
+	column CallSign
+		dataType: string
+		lineageTag: fad04e97-5579-4b7f-b55a-6d4068f58fd4
+		summarizeBy: none
+		sourceColumn: CallSign
+
+		annotation SummarizationSetBy = Automatic
+
+	column VesselType
+		dataType: int64
+		formatString: 0
+		lineageTag: 8062032a-2a0b-463a-8b2f-c18f354c709a
+		summarizeBy: none
+		sourceColumn: VesselType
+
+		annotation SummarizationSetBy = Automatic
+
+	column Length
+		dataType: int64
+		formatString: 0
+		lineageTag: 355726aa-175e-4a50-ad46-9fe5c15efd0c
+		summarizeBy: none
+		sourceColumn: Length
+
+		annotation SummarizationSetBy = Automatic
+
+	column Width
+		dataType: int64
+		formatString: 0
+		lineageTag: 64457cbd-442c-49f5-9e00-85bf87f38794
+		summarizeBy: none
+		sourceColumn: Width
+
+		annotation SummarizationSetBy = Automatic
+
+	column Draft
+		dataType: double
+		lineageTag: 11c29334-9c43-4913-8b29-c515900dd633
+		summarizeBy: none
+		sourceColumn: Draft
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column Cargo
+		dataType: int64
+		formatString: 0
+		lineageTag: e4a8a04d-540c-4968-b753-93d09d31802c
+		summarizeBy: none
+		sourceColumn: Cargo
+
+		annotation SummarizationSetBy = Automatic
+
+	column TransceiverClass
+		dataType: string
+		lineageTag: 3ca7c57e-cb41-44b1-86c0-7a394325b2c4
+		summarizeBy: none
+		sourceColumn: TransceiverClass
+
+		annotation SummarizationSetBy = Automatic
+
+	partition dim_Vessel = m
+		mode: import
+		source =
+				let
+				    Source = Fact_Vessel,
+				    #"Removed Other Columns" = Table.SelectColumns(Source,{"MMSI", "VesselName", "IMO", "CallSign", "VesselType", "Length", "Width", "Draft", "Cargo", "TransceiverClass"}),
+				    #"Removed Duplicates" = Table.Distinct(#"Removed Other Columns", {"MMSI"})
+				in
+				    #"Removed Duplicates"
+
+	annotation PBI_NavigationStepName = Navigation
+
+	annotation PBI_ResultType = Table
+
