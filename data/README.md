@@ -2,32 +2,47 @@
 
 This project uses AIS vessel-tracking data enriched with weather information.
 
-## Original dataset
+## 1. Download the original dataset
 
-The original source dataset is publicly available on Kaggle:
+Download the original dataset from Kaggle:
 
 - **Dataset:** [AIS Data Complete Weather](https://www.kaggle.com/datasets/nadaemad2002/ais-data-complete-weather)
 - **Publisher:** nadaemad2002
 
-Download the dataset from Kaggle and review its licence and usage conditions before reusing or redistributing it. The raw dataset is not stored in this GitHub repository because of its large file size.
+The raw dataset is not included in this GitHub repository because of its large file size. Review Kaggle's licence and usage conditions before reusing the dataset.
 
-## Processed dataset required by the Power BI model
+## 2. Clean and prepare the dataset
 
-The Power BI semantic model currently reads a processed CSV named:
+The Power BI report does **not** use the raw Kaggle CSV directly. It expects a cleaned/processed CSV named:
 
 `ais_data_cleaned.csv`
 
-This is the cleaned/processed file used to build the report. It is not necessarily identical to the original Kaggle download. If you are reproducing the project from the Kaggle source, you must run the project's data-cleaning/preprocessing workflow to produce a compatible `ais_data_cleaned.csv` with the columns expected by the semantic model.
+After downloading the original dataset, perform the required data-cleaning and preprocessing so that the resulting CSV has the columns and structure expected by the Power BI model. Do not simply rename the raw CSV; it must be cleaned and prepared first.
 
-## Local setup
+## 3. Save the cleaned CSV to the expected location
 
-1. Download the original dataset from the Kaggle link above.
-2. Prepare the cleaned dataset named `ais_data_cleaned.csv` using the project's preprocessing workflow.
-3. Open the Power BI project from the `dashboards/` directory.
-4. In Power BI Desktop, update the CSV source in Power Query to point to the location of your local `ais_data_cleaned.csv`, if prompted.
+The current Power BI semantic model contains this hardcoded file path:
 
-> **Current source-path note:** The committed semantic model currently contains a local file reference to `D:\\ais_data_cleaned.csv`. This path is specific to the original developer's computer and will not exist on most other machines. Before refreshing the model on another computer, update the source path to the local location of your cleaned CSV.
+`D:\ais_data_cleaned.csv`
+
+To make the project open and refresh without changing its source query, save your cleaned file using this exact path:
+
+1. Open the `D:\` drive on your computer.
+2. Copy or move the processed CSV into the root of that drive.
+3. Make sure the full file path is exactly:
+
+   `D:\ais_data_cleaned.csv`
+
+**Important:** The file must be named exactly `ais_data_cleaned.csv` and must be directly inside the `D:\` drive, not inside another folder. If your Windows installation does not have a `D:\` drive, you will need to change the CSV source path in Power BI Desktop to wherever you saved the cleaned file.
+
+## 4. Open the Power BI project
+
+1. Open the `dashboards/` folder.
+2. Open `Supply Chain Visibility Optimization Analytics.pbip` in Power BI Desktop.
+3. Once the project opens, refresh the data if required.
+
+If Power BI reports that it cannot find `D:\ais_data_cleaned.csv`, confirm that the cleaned CSV exists at that exact location. Alternatively, update the file path in Power Query to match your own computer.
 
 ## Repository policy
 
-Large raw or processed datasets are intentionally kept outside this repository. This keeps the Git history lightweight and avoids redistributing data unnecessarily. Only download datasets from their original source and follow the source's licence and terms.
+Large raw and processed datasets are intentionally kept outside this repository to keep the Git history lightweight and avoid redistributing data unnecessarily. Each user must download and prepare the dataset locally.
