@@ -42,6 +42,24 @@ The Power BI model follows a star-schema-style structure:
 dim_Vessel  ──────>  Fact_Vessel  <──────  dim_Destination
 ```
 
+## How to Run the Power BI Project
+
+**Important: Download and prepare the dataset before opening or refreshing the Power BI report.** The raw dataset is not included in this repository because of its large file size.
+
+1. Download the original **[AIS Data Complete Weather dataset from Kaggle](https://www.kaggle.com/datasets/nadaemad2002/ais-data-complete-weather)**.
+2. Clean and preprocess the downloaded dataset to produce the processed CSV required by this project. The report does not use the raw Kaggle CSV directly; simply renaming the raw file is not sufficient.
+3. Name the processed file exactly `ais_data_cleaned.csv`.
+4. Save it directly in the root of your Windows `D:\` drive, so its full path is:
+
+   `D:\ais_data_cleaned.csv`
+
+5. Open the `dashboards/` folder and launch `Supply Chain Visibility Optimization Analytics.pbip` in Power BI Desktop.
+6. Refresh the data if required.
+
+**Why this exact location?** The Power BI semantic model currently uses the hardcoded source path `D:\ais_data_cleaned.csv`. If the file is missing or saved elsewhere, Power BI will report that it cannot find the source file. If your computer does not have a `D:\` drive, open the project and change the CSV source path in Power Query to the location where you saved your cleaned file.
+
+For more information about the dataset and setup, see [data/README.md](data/README.md).
+
 ## Project Milestones
 
 ### Milestone 1 — Data Modelling & KPI Foundation
